@@ -1,5 +1,20 @@
 """Phần II và III: Tạo biểu đồ Matplotlib để hiển thị trên Streamlit."""
 
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from sklearn.preprocessing import MinMaxScaler
+
+# Thuộc tính so sánh của biểu đồ radar (README mục 5 - Tổ 3): tên chuẩn ->
+# các tên cột chấp nhận được trong dữ liệu.
+_RADAR_ATTRIBUTES = {
+    "IMDb_Rating": ("IMDb_Rating", "Rating"),
+    "Votes": ("Votes",),
+    "Budget_USD": ("Budget_USD", "Budget"),
+    "Revenue_USD": ("Revenue_USD", "Revenue"),
+    "Duration_min": ("Duration_min", "Duration"),
+}
+
 
 def plot_histogram(df, column):
     """Tạo biểu đồ phân phối của một cột số.
@@ -43,5 +58,79 @@ def plot_radar_chart(df, movie1_name, movie2_name):
           ghi rõ các giá trị hiển thị đã được chuẩn hóa.
         - Trả về Figure, không gọi plt.show hoặc sửa dữ liệu đầu vào;
           tầng gọi đóng hình sau khi hiển thị.
+
+    Ghi chú cài đặt (Tổ 3):
+        - Cột tên phim là Title; so khớp chính xác (đã bỏ khoảng trắng thừa).
+          Ném ValueError nếu không tìm thấy hoặc trùng nhiều bản ghi.
+        - Thuộc tính: IMDb_Rating, Votes, Budget_USD, Revenue_USD,
+          Duration_min (chấp nhận tên rút gọn Rating, Budget, Revenue,
+          Duration). Thuộc tính thiếu cột hoặc thiếu giá trị ở một trong hai
+          phim bị bỏ qua; cần còn ít nhất 3 thuộc tính.
+        - MinMaxScaler được học trên toàn bộ df (tập tham chiếu), không chỉ
+          hai phim; thuộc tính hằng số được đặt ở mức 0.5.
+        - Các giá trị trên biểu đồ đã chuẩn hóa về [0, 1], không phải giá trị
+          gốc.
     """
-    pass
+    if not isinstance(df, pd.DataFrame):
+        raise TypeError("df phải là pandas.DataFrame.")
+    if "Title" not in df.columns:
+        raise ValueError("Thiếu cột 'Title' để tìm tên phim.")
+
+    # 1. Lọc dòng dữ liệu của từng phim (đúng thứ tự phim 1, phim 2)
+    titles = df["Title"].astype(str).str.strip()
+    rows = []
+    for name in (movie1_name, movie2_name):
+        matched = df[titles == str(name).strip()]
+        if len(matched) == 0:
+            raise ValueError(f"Không tìm thấy phim: '{name}'.")
+        if len(matched) > 1:
+            raise ValueError(
+                f"Có {len(matched)} bản ghi trùng tên '{name}'; "
+                "hãy phân biệt bằng năm phát hành hoặc mã phim."
+            )
+        rows.append(matched.index[0])
+
+    # 2. Chọn thuộc tính so sánh (cột số hợp lệ, tập tham chiếu = toàn bộ df)
+    reference = {}
+    for canonical, candidates in _RADAR_ATTRIBUTES.items():
+        found = next((c for c in candidates if c in df.columns), None)
+        if found is not None:
+            reference[canonical] = (
+                pd.to_numeric(df[found], errors="coerce")
+                .replace([np.inf, -np.inf], np.nan)
+            )
+    reference = pd.DataFrame(reference)
+    pair = reference.loc[rows]
+    attributes = [a for a in reference.columns if pair[a].notna().all()]
+    if len(attributes) < 3:
+        raise ValueError(
+            "Cần ít nhất 3 thuộc tính có đủ dữ liệu cho cả hai phim "
+            f"(hiện có: {', '.join(attributes) or 'không có'})."
+        )
+
+    # 3. Min-Max Scaling về [0, 1] dựa trên toàn bộ dữ liệu tham chiếu
+    scaler = MinMaxScaler()
+    scaler.fit(reference[attributes].dropna(how="all"))
+    movies_scaled = scaler.transform(pair[attributes])
+    constant = scaler.data_range_ == 0
+    movies_scaled[:, constant] = 0.5
+
+    # 4. Góc các đỉnh radar + đóng vòng tròn
+    angles = np.linspace(0, 2 * np.pi, len(attributes), endpoint=False).tolist()
+    angles += angles[:1]
+
+    # 5. Vẽ
+    fig, ax = plt.subplots(figsize=(6, 6), subplot_kw={"polar": True})
+    for row, label in zip(movies_scaled, (movie1_name, movie2_name)):
+        values = row.tolist()
+        values += values[:1]
+        ax.plot(angles, values, linewidth=2, label=label)
+        ax.fill(angles, values, alpha=0.25)
+
+    ax.set_ylim(0, 1)
+    ax.set_yticklabels([])
+    ax.set_xticks(angles[:-1])
+    ax.set_xticklabels(attributes)
+    ax.set_title("So sánh hai phim (giá trị đã chuẩn hóa Min-Max về [0, 1])", pad=20)
+    ax.legend(loc="upper right", bbox_to_anchor=(1.3, 1.1))
+    return fig
