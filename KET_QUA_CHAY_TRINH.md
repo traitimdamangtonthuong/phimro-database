@@ -13,7 +13,7 @@ Môi trường: Windows 11, Python 3.13.5, Streamlit 1.45.1, scikit-learn, panda
 | **Phần I** | Thu thập, làm sạch dữ liệu TMDB | ✅ Hoàn thành | Chạy được, xuất `data/cleaned/results.csv` |
 | **Phần II** | Thống kê mô tả, phân phối, histogram | ✅ Hoàn thành | AppTest pass, các hàm thống kê chạy đúng |
 | **Phần III** | Phân cụm K-means, PCA, radar chart | ✅ Hoàn thành | AppTest pass, slider n_clusters động |
-| **Phần IV** | Dự đoán doanh thu bằng Random Forest | ✅ Hoàn thành | AppTest pass, R² = 0.57 |
+| **Phần IV** | Dự đoán doanh thu bằng Random Forest | ✅ Hoàn thành | AppTest pass, R² = 0.699 |
 
 **Tổng kết:** Toàn bộ 4 phần của ứng dụng Streamlit chạy không ngoại lệ. Working tree sạch, đã push lên `origin/main`.
 
@@ -24,8 +24,8 @@ Môi trường: Windows 11, Python 3.13.5, Streamlit 1.45.1, scikit-learn, panda
 
 - **Input:** `data/collected/resultsRaw_completed.csv` (dữ liệu thô TMDB)
 - **Output:** `data/cleaned/results.csv` (dữ liệu đã làm sạch)
-- **Kích thước dữ liệu sạch:** 4.803 dòng × 7 cột
-- **Các cột:** `Title`, `Genre`, `Duration_min`, `IMDb_Rating`, `Budget_USD`, `Revenue_USD`, `Director`
+- **Kích thước dữ liệu sạch:** 4.803 dòng × 10 cột
+- **Các cột:** `Title`, `Genre`, `Duration_min`, `IMDb_Rating`, `Budget_USD`, `Revenue_USD`, `Director`, `Cast`, `Votes`
 - **Quy tắc làm sạch:**
   - Giá trị `0` trong `Budget_USD`, `Revenue_USD`, `IMDb_Rating`, `Duration_min` → chuyển thành `NaN` (quy ước TMDB: 0 = chưa công bố)
   - Loại bỏ trùng lặp theo `(Title, Year)`
@@ -106,17 +106,18 @@ Cột số tham gia: `Duration_min`, `IMDb_Rating`, `Budget_USD`, `Revenue_USD`
 | Đặc trưng | Công thức | Mục đích |
 |-----------|-----------|----------|
 | `log_Budget_USD` | `log1p(Budget_USD)` | Giảm lệch phải của phân phối kinh phí |
+| `log_Votes` | `log1p(Votes)` | Giảm lệch phải của phân phối số lượt đánh giá |
 | `Budget_x_Rating` | `Budget_USD × IMDb_Rating` | Tương tác giữa kinh phí và chất lượng phim |
 
-> Lưu ý: Dữ liệu thô hiện tại **không có cột `Votes`**, nên đặc trưng `log_Votes` chưa được kích hoạt.
+> Lưu ý: Dữ liệu thô hiện tại đã có cột `Votes`, đặc trưng `log_Votes` đã được kích hoạt.
 
 #### 4.3 Kết quả đánh giá (trên tập test)
 
 | Chỉ số | Giá trị |
 |--------|---------|
-| **R² (mô hình)** | **0.573** |
-| MAE | ~$70,7 triệu USD |
-| RMSE | ~$118,0 triệu USD |
+| **R² (mô hình)** | **0.699** |
+| MAE | $57,201,999 |
+| RMSE | $99,195,202 |
 | Baseline R² (trung bình) | ≈ -0.000 |
 | Baseline R² (trung vị) | ≈ -0.143 |
 | Baseline MAE (trung bình) | ~$115,7 triệu USD |
@@ -157,7 +158,7 @@ Tất cả 4 phần chạy không ngoại lệ:
 |-----|-------------|----------|
 | Part IV không hiển thị dự đoán | Nhãn sidebar `"Phần IV: Dự đoán Doanh thu phòng vé"` không khớp với `elif` condition `"Phần IV: Dự đoán Doanh thu"` | Cập nhật `elif` để khớp chính xác nhãn sidebar |
 | Phân cụm báo `n_clusters=3 lớn hơn số mẫu hợp lệ (1)` | Slider `n_clusters` cố định tối đa 10, không tính đến số mẫu thực tế sau khi loại NaN | Tính `n_valid` từ `_prepare_cluster_features()`, giới hạn slider tối đa `min(10, n_valid)` |
-| R² thấp (0.49) | Mô hình chưa có đặc trưng kỹ thuật, siêu tham số mặc định | Thêm `log_Budget_USD`, `Budget_x_Rating`; tuning `max_depth`, `min_samples_leaf`, `max_features`; R² tăng lên 0.57 |
+| R² thấp (0.49) | Mô hình chưa có đặc trưng kỹ thuật, siêu tham số mặc định | Thêm `log_Budget_USD`, `log_Votes`, `Budget_x_Rating`; tuning `max_depth`, `min_samples_leaf`, `max_features`; R² tăng lên 0.699 |
 | Log-transform target làm R² giảm | `log1p(Revenue)` làm R² từ 0.53 xuống 0.23 | Giữ target trên thang USD gốc, chỉ log-transform đặc trưng đầu vào |
 
 
@@ -176,6 +177,7 @@ Files đã commit:
 - src/data_pipeline.py (tên cột dài, validation cột thiết yếu)
 - src/data_clean.py (tương thích ngược)
 - tests/test_data_pipeline.py (2 bài test)
+- DOCUMENTATION.md (tài liệu kỹ thuật chi tiết)
 - PROJECT_CONTEXT.md (bối cảnh và mục tiêu dự án)
 - KET_QUA_CHAY_TRINH.md (báo cáo này)
 ```
@@ -208,10 +210,10 @@ python -m pytest tests/ -v
 ## 7. KẾT LUẬN
 
 Toàn bộ chương trình đã chạy thành công trên 4 phần chức năng:
-- **Phần I:** Làm sạch dữ liệu TMDB → 4.803 mẫu, 7 cột
+- **Phần I:** Làm sạch dữ liệu TMDB → 4.803 mẫu, 10 cột
 - **Phần II:** Thống kê mô tả + histogram → các hàm chạy đúng, lưu `data/results2.csv`
 - **Phần III:** Phân cụm K-means + PCA + radar → slider động, không lỗi `n_clusters`
-- **Phần IV:** Dự đoán doanh thu Random Forest → R² = 0.57, tốt hơn baseline rõ rệt
+- **Phần IV:** Dự đoán doanh thu Random Forest → R² = 0.699, tốt hơn baseline rõ rệt
 
 Tất cả kiểm thử tự động (pytest + AppTest) đều pass. Code đã được commit và push lên `origin/main` (commit `b709a47`).
 
