@@ -208,8 +208,15 @@ def apply_streamlit_theme():
             text-shadow: 0 1px 10px rgba(0, 0, 0, 0.4);
         }
 
+        .hero-banner .hero-subtitle {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: clamp(0.95rem, 2vw, 1.15rem);
+            margin-top: 0.75rem;
+            text-shadow: 0 1px 8px rgba(0, 0, 0, 0.4);
+        }
+
         div[data-testid="stMetric"] {
-            min-height: 132px;
+            min-height: 100px;
             padding: 1.25rem 1.35rem;
             background: var(--streamlit-surface);
             border: 1px solid var(--streamlit-border);
@@ -254,24 +261,7 @@ def apply_streamlit_theme():
 
         h1, h2, h3 { color: var(--streamlit-text); }
 
-        @media (max-width: 680px) {
-            .block-container { padding-top: 7.8rem; }
-            .st-key-top_nav {
-                padding: 0.75rem 5vw 0;
-            }
-            .top-navigation__brand {
-                min-height: 28px;
-            }
-            .st-key-top_nav .stButton,
-            .st-key-top_nav .stButton > button {
-                height: 38px;
-                min-height: 38px;
-            }
-            .st-key-top_nav .stButton > button {
-                padding: 0 0.3rem;
-                font-size: 0.9rem;
-            }
-        }
+        
         </style>
         """,
         unsafe_allow_html=True,
@@ -316,19 +306,46 @@ def render_overview():
         <section class="hero-banner">
             <h1>PHIMRO-DATABASE: HỆ THỐNG PHÂN TÍCH VÀ DỰ ĐOÁN
             DOANH THU PHIM ĐIỆN ẢNH</h1>
+            <p class="hero-subtitle">Phân tích dữ liệu TMDB, thống kê mô tả,
+            phân cụm K-means và dự đoán doanh thu phòng vé bằng Random Forest</p>
         </section>
         """,
         unsafe_allow_html=True,
     )
-    metric_1, metric_2, metric_3 = st.columns(3)
-    metric_1.metric("Tập dữ liệu", "4.803 phim", "Dữ liệu đã làm sạch")
-    metric_2.metric("Mô hình Random Forest (R²)", "0.699", "Trên tập kiểm tra")
-    metric_3.metric(
+    m1, m2, m3 = st.columns(3)
+    m1.metric("Tập dữ liệu", "4.803 phim", "Dữ liệu đã làm sạch")
+    m2.metric("Mô hình Random Forest (R²)", "0.699", "Trên tập kiểm tra")
+    m3.metric(
         "Sai số tuyệt đối (MAE)",
         "$57,201,999",
         "Sai số trên tập kiểm tra",
         delta_color="inverse",
     )
+
+    st.markdown("---")
+
+    c1, c2, c3, c4 = st.columns(4)
+    c1.metric("RMSE", "$99,195,202", "Trên tập kiểm tra")
+    c2.metric("Số thể loại", "21", "Action, Comedy, Drama…")
+    c3.metric("Số cột dữ liệu", "10", "Title, Genre, Budget…")
+    c4.metric("Số mẫu test", "676", "20% dữ liệu hợp lệ")
+
+    st.markdown("---")
+
+    st.subheader("Truy cập nhanh")
+    q1, q2, q3, q4 = st.columns(4)
+    if q1.button("🧹 Làm sạch dữ liệu", use_container_width=True, key="q_clean"):
+        st.session_state["page"] = "part-i"
+        st.rerun()
+    if q2.button("📊 Thống kê & Phân bố", use_container_width=True, key="q_stats"):
+        st.session_state["page"] = "part-ii"
+        st.rerun()
+    if q3.button("🎯 Phân cụm & Radar", use_container_width=True, key="q_cluster"):
+        st.session_state["page"] = "part-iii"
+        st.rerun()
+    if q4.button("💰 Dự đoán doanh thu", use_container_width=True, key="q_predict"):
+        st.session_state["page"] = "part-iv"
+        st.rerun()
 
 
 
@@ -633,53 +650,68 @@ elif section == "Phần III: Học máy - Phân cụm & So sánh":
                     plt.close(fig)
 
                     with detail_column:
-                        # st.metric có cỡ chữ mặc định lớn cho cột hẹp của
-                        # phần radar; thu nhỏ và cho phép giá trị dài xuống dòng.
-                        st.markdown(
-                            """
-                            <style>
-                            [data-testid="stMetricValue"] {
-                                font-size: clamp(1.25rem, 2.8vw, 1.65rem);
-                                white-space: normal;
-                                overflow-wrap: anywhere;
-                            }
-                            </style>
-                            """,
-                            unsafe_allow_html=True,
-                        )
-                        st.markdown("#### Dữ liệu gốc")
-                        selected_rows = []
-                        titles = radar_df["Title"].astype(str).str.strip()
-                        for name in (movie1, movie2):
-                            selected_rows.append(
-                                radar_df.loc[titles == name].iloc[0]
-                            )
-
-                        for icon, movie, row in zip(
-                            ("🔵", "🔴"),
-                            (movie1, movie2),
-                            selected_rows,
-                        ):
+                        # Chỉ thu gọn các metric thuộc khối dữ liệu radar;
+                        # metric trên trang Tổng quan vẫn giữ kích thước lớn.
+                        with st.container(key="radar_details"):
                             st.markdown(
-                                f"**{icon} {movie} ({format_year(row.get('Year'))})**"
+                                """
+                                <style>
+                                .st-key-radar_details div[data-testid="stMetric"] {
+                                    min-height: 0;
+                                    padding: 0.7rem 0.9rem 0.75rem;
+                                }
+                                .st-key-radar_details div[data-testid="stMetricLabel"] {
+                                    font-size: 0.82rem;
+                                }
+                                .st-key-radar_details div[data-testid="stMetricValue"] {
+                                    font-size: clamp(1.1rem, 2.2vw, 1.42rem);
+                                    line-height: 1.2;
+                                    white-space: normal;
+                                    overflow-wrap: anywhere;
+                                }
+                                .st-key-radar_details div[data-testid="stMetricDelta"] {
+                                    display: none;
+                                }
+                                .st-key-radar_details hr {
+                                    margin: 1rem 0;
+                                }
+                                </style>
+                                """,
+                                unsafe_allow_html=True,
                             )
-                            metric_left, metric_right = st.columns(2)
-                            metric_left.metric(
-                                "Điểm TMDB",
-                                f"{row['IMDb_Rating']:.1f}".replace(".", ",") + " / 10",
-                            )
-                            metric_right.metric(
-                                "Thời lượng",
-                                f"{row['Duration_min']:,.0f}".replace(",", ".") + " phút",
-                            )
-                            metric_left, metric_right = st.columns(2)
-                            metric_left.metric("Kinh phí", format_usd(row["Budget_USD"]))
-                            metric_right.metric("Doanh thu", format_usd(row["Revenue_USD"]))
-                            st.metric(
-                                "Lượt đánh giá",
-                                f"{row['Votes']:,.0f}".replace(",", "."),
-                            )
-                            st.divider()
+                            st.markdown("#### Dữ liệu gốc")
+                            selected_rows = []
+                            titles = radar_df["Title"].astype(str).str.strip()
+                            for name in (movie1, movie2):
+                                selected_rows.append(
+                                    radar_df.loc[titles == name].iloc[0]
+                                )
+
+                            for icon, movie, row in zip(
+                                ("🔵", "🔴"),
+                                (movie1, movie2),
+                                selected_rows,
+                            ):
+                                st.markdown(
+                                    f"**{icon} {movie} ({format_year(row.get('Year'))})**"
+                                )
+                                metric_left, metric_right = st.columns(2)
+                                metric_left.metric(
+                                    "Điểm TMDB",
+                                    f"{row['IMDb_Rating']:.1f}".replace(".", ",") + " / 10",
+                                )
+                                metric_right.metric(
+                                    "Thời lượng",
+                                    f"{row['Duration_min']:,.0f}".replace(",", ".") + " phút",
+                                )
+                                metric_left, metric_right = st.columns(2)
+                                metric_left.metric("Kinh phí", format_usd(row["Budget_USD"]))
+                                metric_right.metric("Doanh thu", format_usd(row["Revenue_USD"]))
+                                st.metric(
+                                    "Lượt đánh giá",
+                                    f"{row['Votes']:,.0f}".replace(",", "."),
+                                )
+                                st.divider()
                 except ValueError as exc:
                     st.error(str(exc))
 
