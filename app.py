@@ -66,28 +66,301 @@ def format_year(value):
     return str(int(value)) if pd.notna(value) else "Không rõ năm"
 
 
+def apply_streamlit_theme():
+    """Áp dụng theme trình bày; không làm thay đổi bố cục nội dung từng phần."""
+    st.markdown(
+        """
+        <style>
+        @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;500;600;700&display=swap');
+
+        :root {
+            --streamlit-background: #0E1117;
+            --streamlit-surface: #151A23;
+            --streamlit-text: #FAFAFA;
+            --streamlit-muted: #A6AFBD;
+            --streamlit-border: #303846;
+            --streamlit-primary: #FF4B4B;
+        }
+
+        [data-testid="stSidebar"], [data-testid="stSidebarCollapsedControl"] {
+            display: none;
+        }
+
+        header[data-testid="stHeader"] {
+            display: none;
+        }
+
+        .stApp {
+            background: var(--streamlit-background);
+            color: var(--streamlit-text);
+            font-family: "Source Sans Pro", sans-serif;
+        }
+
+        .block-container {
+            max-width: 1180px;
+            padding-top: 6.1rem;
+            padding-bottom: 3.5rem;
+        }
+
+        .st-key-top_nav {
+            position: fixed;
+            z-index: 999999;
+            top: 0;
+            left: 50%;
+            width: 100vw;
+            transform: translateX(-50%);
+            min-height: 64px;
+            padding: 0 5vw;
+            background: rgba(14, 17, 23, 0.96);
+            border-bottom: 1px solid var(--streamlit-border);
+            box-shadow: 0 1px 6px rgba(0, 0, 0, 0.22);
+            backdrop-filter: blur(10px);
+        }
+
+        .top-navigation__brand {
+            display: flex;
+            align-items: center;
+            min-height: 64px;
+            color: var(--streamlit-text) !important;
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            white-space: nowrap;
+        }
+
+        .top-navigation__brand::before {
+            content: "●";
+            margin-right: 0.45rem;
+            color: var(--streamlit-primary);
+            font-size: 0.75rem;
+        }
+
+        .st-key-top_nav [data-testid="stHorizontalBlock"] {
+            align-items: stretch;
+            gap: 0;
+        }
+
+        .st-key-top_nav .stButton {
+            height: 64px;
+        }
+
+        .st-key-top_nav .stButton > button {
+            position: relative;
+            width: 100%;
+            height: 64px;
+            min-height: 64px;
+            padding: 0 0.75rem;
+            border: 0 !important;
+            border-radius: 0;
+            color: var(--streamlit-muted) !important;
+            background: transparent !important;
+            font-size: 1rem;
+            font-weight: 600;
+            box-shadow: none !important;
+        }
+
+        .st-key-top_nav .stButton > button:hover {
+            color: var(--streamlit-text) !important;
+            background: rgba(255, 255, 255, 0.04) !important;
+        }
+
+        .st-key-top_nav .stButton > button[kind="primary"] {
+            color: var(--streamlit-text) !important;
+            background: transparent !important;
+        }
+
+        .st-key-top_nav .stButton > button[kind="primary"]::after {
+            position: absolute;
+            right: 0.75rem;
+            bottom: 0;
+            left: 0.75rem;
+            height: 3px;
+            content: "";
+            background: var(--streamlit-primary);
+            border-radius: 3px 3px 0 0;
+        }
+
+        .hero-banner {
+            position: relative;
+            min-height: 300px;
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            background-image:
+                linear-gradient(90deg, rgba(18, 22, 31, 0.86), rgba(18, 22, 31, 0.54)),
+                url("https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=2070");
+            background-position: center;
+            background-size: cover;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.16);
+            text-align: center;
+        }
+
+        .hero-banner h1 {
+            max-width: 900px;
+            margin: 0;
+            color: #FFFFFF;
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            line-height: 1.18;
+            text-shadow: 0 1px 10px rgba(0, 0, 0, 0.4);
+        }
+
+        div[data-testid="stMetric"] {
+            min-height: 132px;
+            padding: 1.25rem 1.35rem;
+            background: var(--streamlit-surface);
+            border: 1px solid var(--streamlit-border);
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        div[data-testid="stMetricLabel"] {
+            color: var(--streamlit-muted);
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        div[data-testid="stMetricValue"] {
+            color: var(--streamlit-text);
+            font-family: "Source Sans Pro", sans-serif;
+            font-weight: 700;
+        }
+
+        .stButton > button {
+            border: 1px solid var(--streamlit-primary);
+            border-radius: 0.5rem;
+            color: var(--streamlit-primary);
+            font-family: "Source Sans Pro", sans-serif;
+            font-weight: 600;
+        }
+
+        .stButton > button:hover {
+            color: #FFFFFF;
+            background: var(--streamlit-primary);
+            border-color: var(--streamlit-primary);
+        }
+
+        div[data-testid="stDataFrame"],
+        div[data-testid="stExpander"] {
+            background: var(--streamlit-surface);
+            border: 1px solid var(--streamlit-border);
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+        }
+
+        h1, h2, h3 { color: var(--streamlit-text); }
+
+        @media (max-width: 680px) {
+            .block-container { padding-top: 7.8rem; }
+            .st-key-top_nav {
+                padding: 0.75rem 5vw 0;
+            }
+            .top-navigation__brand {
+                min-height: 28px;
+            }
+            .st-key-top_nav .stButton,
+            .st-key-top_nav .stButton > button {
+                height: 38px;
+                min-height: 38px;
+            }
+            .st-key-top_nav .stButton > button {
+                padding: 0 0.3rem;
+                font-size: 0.9rem;
+            }
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def _select_page(page_key):
+    """Đổi nội dung trong phiên Streamlit, không điều hướng trình duyệt."""
+    st.session_state["page"] = page_key
+
+
+def render_top_navigation(current_page):
+    """Hiển thị top navigation bằng nút Streamlit trong cùng một trang."""
+    pages = (
+        ("overview", "Tổng quan"),
+        ("part-i", "Phần I"),
+        ("part-ii", "Phần II"),
+        ("part-iii", "Phần III"),
+        ("part-iv", "Phần IV"),
+    )
+    with st.container(key="top_nav"):
+        columns = st.columns((2.4, 1, 1, 1, 1, 1), gap="small")
+        columns[0].markdown(
+            '<div class="top-navigation__brand">Phimro-Database</div>',
+            unsafe_allow_html=True,
+        )
+        for column, (page_key, label) in zip(columns[1:], pages):
+            column.button(
+                label,
+                key=f"nav_{page_key}",
+                type="primary" if page_key == current_page else "secondary",
+                use_container_width=True,
+                on_click=_select_page,
+                args=(page_key,),
+            )
+
+
+def render_overview():
+    """Hiển thị trang Tổng quan theo thiết kế hero và metrics Streamlit."""
+    st.markdown(
+        """
+        <section class="hero-banner">
+            <h1>PHIMRO-DATABASE: HỆ THỐNG PHÂN TÍCH VÀ DỰ ĐOÁN
+            DOANH THU PHIM ĐIỆN ẢNH</h1>
+        </section>
+        """,
+        unsafe_allow_html=True,
+    )
+    metric_1, metric_2, metric_3 = st.columns(3)
+    metric_1.metric("Tập dữ liệu", "4.803 phim", "Dữ liệu đã làm sạch")
+    metric_2.metric("Mô hình Random Forest (R²)", "0.699", "Trên tập kiểm tra")
+    metric_3.metric(
+        "Sai số tuyệt đối (MAE)",
+        "$57,201,999",
+        "Sai số trên tập kiểm tra",
+        delta_color="inverse",
+    )
+
+
 
 # Các hàm khác được nhập sẵn để từng nhóm tích hợp khi hoàn thành.
 st.set_page_config(
-    page_title="Movie Data Analysis & Prediction",
+    page_title="Phimro-Database",
     page_icon="🎬",
     layout="wide",
+    initial_sidebar_state="collapsed",
 )
 
-st.title("Phân tích dữ liệu và dự đoán doanh thu phim")
-st.caption("Dự án phân tích dữ liệu IMDb/TMDB")
+apply_streamlit_theme()
+if "page" not in st.session_state:
+    st.session_state["page"] = "overview"
+page = st.session_state["page"]
+page_to_section = {
+    "overview": "Tổng quan",
+    "part-i": "Phần I: Tổng quan & Xử lý Dữ liệu",
+    "part-ii": "Phần II: Thống kê & Phân bố",
+    "part-iii": "Phần III: Học máy - Phân cụm & So sánh",
+    "part-iv": "Phần IV: Dự đoán Doanh thu phòng vé",
+}
+if page not in page_to_section:
+    page = "overview"
+    st.session_state["page"] = page
+section = page_to_section[page]
+render_top_navigation(page)
 
-section = st.sidebar.radio(
-    "Điều hướng",
-    (
-        "Phần I: Tổng quan & Xử lý Dữ liệu",
-        "Phần II: Thống kê & Phân bố",
-        "Phần III: Học máy - Phân cụm & So sánh",
-        "Phần IV: Dự đoán Doanh thu phòng vé",
-    ),
-)
+if section == "Tổng quan":
+    render_overview()
 
-if section == "Phần I: Tổng quan & Xử lý Dữ liệu":
+elif section == "Phần I: Tổng quan & Xử lý Dữ liệu":
     st.header("Phần I: Tổng quan và làm sạch dữ liệu")
 
     # Nút làm sạch file thô mặc định có sẵn trong repo (không cần upload)
@@ -128,7 +401,7 @@ if section == "Phần I: Tổng quan & Xử lý Dữ liệu":
         col_b.metric("Số cột", len(df_raw.columns))
         
         st.subheader("Xem trước dữ liệu đã làm sạch")
-        st.dataframe(df_raw.head(50), use_container_width=True)
+        st.dataframe(df_raw, use_container_width=True)
 
 elif section == "Phần II: Thống kê & Phân bố":
     st.header("Phần II: Thống kê và phân phối")
@@ -315,8 +588,8 @@ elif section == "Phần III: Học máy - Phân cụm & So sánh":
                 st.dataframe(cluster_summary, hide_index=True, use_container_width=True)
             plt.close(fig)
 
-            with st.expander("Xem bảng dữ liệu chi tiết (50 dòng đầu)"):
-                st.dataframe(table.head(50), use_container_width=True)
+            with st.expander("Xem bảng dữ liệu chi tiết (toàn bộ)"):
+                st.dataframe(table, use_container_width=True)
 
 
             st.subheader("2. So sánh hai phim bằng biểu đồ radar")
