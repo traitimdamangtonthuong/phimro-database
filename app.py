@@ -312,6 +312,7 @@ def render_overview():
         """,
         unsafe_allow_html=True,
     )
+    st.markdown("---")
     m1, m2, m3 = st.columns(3)
     m1.metric("Tập dữ liệu", "4.803 phim", "Dữ liệu đã làm sạch")
     m2.metric("Mô hình Random Forest (R²)", "0.699", "Trên tập kiểm tra")
@@ -322,7 +323,6 @@ def render_overview():
         delta_color="inverse",
     )
 
-    st.markdown("---")
 
     c1, c2, c3, c4 = st.columns(4)
     c1.metric("RMSE", "$99,195,202", "Trên tập kiểm tra")
@@ -332,20 +332,6 @@ def render_overview():
 
     st.markdown("---")
 
-    st.subheader("Truy cập nhanh")
-    q1, q2, q3, q4 = st.columns(4)
-    if q1.button("🧹 Làm sạch dữ liệu", use_container_width=True, key="q_clean"):
-        st.session_state["page"] = "part-i"
-        st.rerun()
-    if q2.button("📊 Thống kê & Phân bố", use_container_width=True, key="q_stats"):
-        st.session_state["page"] = "part-ii"
-        st.rerun()
-    if q3.button("🎯 Phân cụm & Radar", use_container_width=True, key="q_cluster"):
-        st.session_state["page"] = "part-iii"
-        st.rerun()
-    if q4.button("💰 Dự đoán doanh thu", use_container_width=True, key="q_predict"):
-        st.session_state["page"] = "part-iv"
-        st.rerun()
 
 
 
