@@ -67,210 +67,17 @@ def format_year(value):
 
 
 def apply_streamlit_theme():
-    """Áp dụng theme trình bày; không làm thay đổi bố cục nội dung từng phần."""
-    st.markdown(
-        """
-        <style>
-        @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;500;600;700&display=swap');
-
-        :root {
-            --streamlit-background: #0E1117;
-            --streamlit-surface: #151A23;
-            --streamlit-text: #FAFAFA;
-            --streamlit-muted: #A6AFBD;
-            --streamlit-border: #303846;
-            --streamlit-primary: #FF4B4B;
-        }
-
-        [data-testid="stSidebar"], [data-testid="stSidebarCollapsedControl"] {
-            display: none;
-        }
-
-        header[data-testid="stHeader"] {
-            display: none;
-        }
-
-        .stApp {
-            background: var(--streamlit-background);
-            color: var(--streamlit-text);
-            font-family: "Source Sans Pro", sans-serif;
-        }
-
-        .block-container {
-            max-width: 1180px;
-            padding-top: 6.1rem;
-            padding-bottom: 3.5rem;
-        }
-
-        .st-key-top_nav {
-            position: fixed;
-            z-index: 999999;
-            top: 0;
-            left: 50%;
-            width: 100vw;
-            transform: translateX(-50%);
-            min-height: 64px;
-            padding: 0 5vw;
-            background: rgba(14, 17, 23, 0.96);
-            border-bottom: 1px solid var(--streamlit-border);
-            box-shadow: 0 1px 6px rgba(0, 0, 0, 0.22);
-            backdrop-filter: blur(10px);
-        }
-
-        .top-navigation__brand {
-            display: flex;
-            align-items: center;
-            min-height: 64px;
-            color: var(--streamlit-text) !important;
-            font-size: 1.25rem;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            white-space: nowrap;
-        }
-
-        .top-navigation__brand::before {
-            content: "●";
-            margin-right: 0.45rem;
-            color: var(--streamlit-primary);
-            font-size: 0.75rem;
-        }
-
-        .st-key-top_nav [data-testid="stHorizontalBlock"] {
-            align-items: stretch;
-            gap: 0;
-        }
-
-        .st-key-top_nav .stButton {
-            height: 64px;
-        }
-
-        .st-key-top_nav .stButton > button {
-            position: relative;
-            width: 100%;
-            height: 64px;
-            min-height: 64px;
-            padding: 0 0.75rem;
-            border: 0 !important;
-            border-radius: 0;
-            color: var(--streamlit-muted) !important;
-            background: transparent !important;
-            font-size: 1rem;
-            font-weight: 600;
-            box-shadow: none !important;
-        }
-
-        .st-key-top_nav .stButton > button:hover {
-            color: var(--streamlit-text) !important;
-            background: rgba(255, 255, 255, 0.04) !important;
-        }
-
-        .st-key-top_nav .stButton > button[kind="primary"] {
-            color: var(--streamlit-text) !important;
-            background: transparent !important;
-        }
-
-        .st-key-top_nav .stButton > button[kind="primary"]::after {
-            position: absolute;
-            right: 0.75rem;
-            bottom: 0;
-            left: 0.75rem;
-            height: 3px;
-            content: "";
-            background: var(--streamlit-primary);
-            border-radius: 3px 3px 0 0;
-        }
-
-        .hero-banner {
-            position: relative;
-            min-height: 300px;
-            display: grid;
-            place-items: center;
-            overflow: hidden;
-            padding: 2rem;
-            border-radius: 0.5rem;
-            background-image:
-                linear-gradient(90deg, rgba(18, 22, 31, 0.86), rgba(18, 22, 31, 0.54)),
-                url("https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=2070");
-            background-position: center;
-            background-size: cover;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.16);
-            text-align: center;
-        }
-
-        .hero-banner h1 {
-            max-width: 900px;
-            margin: 0;
-            color: #FFFFFF;
-            font-size: clamp(1.8rem, 4vw, 3rem);
-            font-weight: 700;
-            letter-spacing: -0.025em;
-            line-height: 1.18;
-            text-shadow: 0 1px 10px rgba(0, 0, 0, 0.4);
-        }
-
-        .hero-banner .hero-subtitle {
-            color: rgba(255, 255, 255, 0.85);
-            font-size: clamp(0.95rem, 2vw, 1.15rem);
-            margin-top: 0.75rem;
-            text-shadow: 0 1px 8px rgba(0, 0, 0, 0.4);
-        }
-
-        div[data-testid="stMetric"] {
-            min-height: 100px;
-            padding: 1.25rem 1.35rem;
-            background: var(--streamlit-surface);
-            border: 1px solid var(--streamlit-border);
-            border-radius: 0.5rem;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        div[data-testid="stMetricLabel"] {
-            color: var(--streamlit-muted);
-            font-size: 0.95rem;
-            font-weight: 500;
-        }
-
-        div[data-testid="stMetricValue"] {
-            color: var(--streamlit-text);
-            font-family: "Source Sans Pro", sans-serif;
-            font-weight: 700;
-        }
-
-        .stButton > button {
-            border: 1px solid var(--streamlit-primary);
-            border-radius: 0.5rem;
-            color: var(--streamlit-primary);
-            font-family: "Source Sans Pro", sans-serif;
-            font-weight: 600;
-        }
-
-        .stButton > button:hover {
-            color: #FFFFFF;
-            background: var(--streamlit-primary);
-            border-color: var(--streamlit-primary);
-        }
-
-        div[data-testid="stDataFrame"],
-        div[data-testid="stExpander"] {
-            background: var(--streamlit-surface);
-            border: 1px solid var(--streamlit-border);
-            border-radius: 0.5rem;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
-            overflow: hidden;
-        }
-
-        h1, h2, h3 { color: var(--streamlit-text); }
-
-        
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
+    css_file = BASE_DIR / "assets" / "style.css"
+    with open(css_file, "r", encoding="utf-8") as f:
+            css_content = f.read()
+    st.markdown(f"<style>\n{css_content}\n</style>", unsafe_allow_html=True)
+    
 
 
 def _select_page(page_key):
     """Đổi nội dung trong phiên Streamlit, không điều hướng trình duyệt."""
     st.session_state["page"] = page_key
+        
 
 
 def render_top_navigation(current_page):
@@ -300,39 +107,56 @@ def render_top_navigation(current_page):
 
 
 def render_overview():
-    """Hiển thị trang Tổng quan theo thiết kế hero và metrics Streamlit."""
+    """Hiển thị trang Tổng quan theo thiết kế hero, text giới thiệu và lưới hình ảnh."""
     st.markdown(
         """
+        <!-- Hero Banner -->
         <section class="hero-banner">
-            <h1>PHIMRO-DATABASE: HỆ THỐNG PHÂN TÍCH VÀ DỰ ĐOÁN
-            DOANH THU PHIM ĐIỆN ẢNH</h1>
-            <p class="hero-subtitle">Phân tích dữ liệu TMDB, thống kê mô tả,
-            phân cụm K-means và dự đoán doanh thu phòng vé bằng Random Forest</p>
+            <h1>PHIMRO-DATABASE: HỆ THỐNG PHÂN TÍCH VÀ DỰ ĐOÁN DOANH THU PHIM ĐIỆN ẢNH</h1>
+            <p class="hero-subtitle">Phân tích dữ liệu TMDB, thống kê mô tả, phân cụm K-means và dự đoán doanh thu phòng vé bằng Random Forest</p>
+        </section>
+        <h2> PHIMRO-DATABASE LÀ GÌ?</h2>
+        <!-- Text Giới thiệu -->
+        <section class="intro-section">
+            <h2>Khám phá dữ liệu điện ảnh toàn cầu</h2>
+            <p>Trong kỷ nguyên số và sự bùng nổ của dữ liệu lớn, việc khai phá dữ liệu để tìm ra các quy luật ẩn và dự báo tương lai đã trở thành một yêu cầu thiết yếu trong ngành công nghiệp điện ảnh. <strong>Phimro-database</strong> được xây dựng nhằm mục đích cung cấp một góc nhìn sâu sắc về thị trường phim chiếu rạp toàn cầu.</p>
+            <p>Hệ thống tự động trích xuất, làm sạch và xử lý dữ liệu từ <span class="highlight-text">The Movie Database (TMDB)</span>. Thông qua các công cụ trực quan hóa và thuật toán học máy tiên tiến, nền tảng cho phép người dùng quan sát các xu hướng nghệ thuật, phân loại phim, đồng thời dự báo tiềm năng doanh thu cho các dự án phim trong tương lai.</p>
+        </section>
+        <h2> PHIMRO-DATABASE BAO GỒM?</h2>
+        <!-- Lưới hình ảnh -->
+        <section class="image-tiles-grid">
+            <div class="tile-card">
+                <img src="https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?q=80&w=800" alt="Data Cleaning">
+                <div class="tile-overlay">
+                    <h3 class="tile-title">Làm Sạch Dữ Liệu</h3>
+                    <p class="tile-desc">Xử lý nhiễu và định dạng chuẩn.</p>
+                </div>
+            </div>
+            <div class="tile-card">
+                <img src="https://images.unsplash.com/photo-1478720568477-152d9b164e26?q=80&w=800" alt="Data Analytics">
+                <div class="tile-overlay">
+                    <h3 class="tile-title">Khám Phá & Thống Kê</h3>
+                    <p class="tile-desc">Truy xuất biểu đồ phân phối.</p>
+                </div>
+            </div>
+            <div class="tile-card">
+                <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=800" alt="Machine Learning">
+                <div class="tile-overlay">
+                    <h3 class="tile-title">Mô Hình Học Máy</h3>
+                    <p class="tile-desc">Phân cụm K-Means đa chiều.</p>
+                </div>
+            </div>
+            <div class="tile-card">
+                <img src="https://images.unsplash.com/photo-1585647347384-2593bc35786b?q=80&w=800" alt="Revenue Prediction">
+                <div class="tile-overlay">
+                    <h3 class="tile-title">Dự Đoán Doanh Thu</h3>
+                    <p class="tile-desc">AI Random Forest Regressor.</p>
+                </div>
+            </div>
         </section>
         """,
         unsafe_allow_html=True,
     )
-    st.markdown("---")
-    m1, m2, m3 = st.columns(3)
-    m1.metric("Tập dữ liệu", "4.803 phim", "Dữ liệu đã làm sạch")
-    m2.metric("Mô hình Random Forest (R²)", "0.699", "Trên tập kiểm tra")
-    m3.metric(
-        "Sai số tuyệt đối (MAE)",
-        "$57,201,999",
-        "Sai số trên tập kiểm tra",
-        delta_color="inverse",
-    )
-
-
-    c1, c2, c3, c4 = st.columns(4)
-    c1.metric("RMSE", "$99,195,202", "Trên tập kiểm tra")
-    c2.metric("Số thể loại", "21", "Action, Comedy, Drama…")
-    c3.metric("Số cột dữ liệu", "10", "Title, Genre, Budget…")
-    c4.metric("Số mẫu test", "676", "20% dữ liệu hợp lệ")
-
-    st.markdown("---")
-
-
 
 
 # Các hàm khác được nhập sẵn để từng nhóm tích hợp khi hoàn thành.

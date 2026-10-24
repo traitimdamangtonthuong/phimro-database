@@ -1,0 +1,271 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;500;600;700&display=swap');
+
+:root {
+    --streamlit-background: #0E1117;
+    --streamlit-surface: #151A23;
+    --streamlit-text: #FAFAFA;
+    --streamlit-muted: #A6AFBD;
+    --streamlit-border: #303846;
+    --streamlit-primary: #FF4B4B;
+}
+
+[data-testid="stSidebar"], [data-testid="stSidebarCollapsedControl"] {
+    display: none;
+}
+
+header[data-testid="stHeader"] {
+    display: none;
+}
+
+/* 1. NỀN GRADIENT CHUYỂN ĐỘNG LIÊN TỤC */
+.stApp {
+    background: linear-gradient(-45deg, #0E1117, #151A23, #231215, #0E1117) !important;
+    background-size: 400% 400% !important;
+    animation: gradientBG 15s ease infinite !important;
+    color: var(--streamlit-text);
+    font-family: "Source Sans Pro", sans-serif;
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* 2. LỚP PHỦ HIỆU ỨNG HẠT (PARTICLES) BẰNG CSS THUẦN */
+.stApp::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    width: 100vw; height: 100vh;
+    pointer-events: none; /* Không cản trở click chuột */
+    z-index: 0; /* Nằm dưới nội dung */
+    
+    /* Dùng radial-gradient để vẽ các chấm nhỏ (hạt) */
+    background-image: 
+        radial-gradient(1.5px 1.5px at 20px 30px, rgba(255,255,255,0.15), rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 40px 70px, rgba(255,75,75,0.15), rgba(0,0,0,0)),
+        radial-gradient(1px 1px at 90px 40px, rgba(255,255,255,0.1), rgba(0,0,0,0)),
+        radial-gradient(2.5px 2.5px at 160px 120px, rgba(255,255,255,0.1), rgba(0,0,0,0)),
+        radial-gradient(1.5px 1.5px at 250px 90px, rgba(255,75,75,0.1), rgba(0,0,0,0));
+    background-size: 300px 300px;
+    animation: particleUp 60s linear infinite;
+}
+
+@keyframes particleUp {
+    from { background-position: 0 0; }
+    to { background-position: 0 -600px; }
+}
+
+/* 3. ÉP NỘI DUNG CHÍNH NỔI LÊN TRÊN NỀN */
+[data-testid="stMain"],
+.block-container {
+    position: relative !important;
+    z-index: 10 !important; /* Hệ số cao để ép nổi hoàn toàn lên trên lớp ::before */
+    background-color: transparent !important;
+}
+
+.block-container {
+    max-width: 1180px;
+    padding-top: 6.1rem;
+    padding-bottom: 3.5rem;
+}
+
+.st-key-top_nav {
+    position: fixed;
+    z-index: 999999;
+    top: 0;
+    left: 50%;
+    width: 100vw;
+    transform: translateX(-50%);
+    min-height: 64px;
+    padding: 0 5vw;
+    background: rgba(14, 17, 23, 0.96);
+    border-bottom: 1px solid var(--streamlit-border);
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.22);
+    backdrop-filter: blur(10px);
+}
+
+.top-navigation__brand {
+    display: flex;
+    align-items: center;
+    min-height: 64px;
+    color: var(--streamlit-text) !important;
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+}
+
+.top-navigation__brand::before {
+    content: "●";
+    margin-right: 0.45rem;
+    color: var(--streamlit-primary);
+    font-size: 0.75rem;
+}
+
+.st-key-top_nav [data-testid="stHorizontalBlock"] {
+    align-items: stretch;
+    gap: 0;
+}
+
+.st-key-top_nav .stButton {
+    height: 64px;
+}
+
+.st-key-top_nav .stButton > button {
+    position: relative;
+    width: 100%;
+    height: 64px;
+    min-height: 64px;
+    padding: 0 0.75rem;
+    border: 0 !important;
+    border-radius: 0;
+    color: var(--streamlit-muted) !important;
+    background: transparent !important;
+    font-size: 1rem;
+    font-weight: 600;
+    box-shadow: none !important;
+}
+
+.st-key-top_nav .stButton > button:hover {
+    color: var(--streamlit-text) !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+}
+
+.st-key-top_nav .stButton > button[kind="primary"] {
+    color: var(--streamlit-text) !important;
+    background: transparent !important;
+}
+
+.st-key-top_nav .stButton > button[kind="primary"]::after {
+    position: absolute;
+    right: 0.75rem;
+    bottom: 0;
+    left: 0.75rem;
+    height: 3px;
+    content: "";
+    background: var(--streamlit-primary);
+    border-radius: 3px 3px 0 0;
+}
+
+.hero-banner {
+    position: relative;
+    min-height: 300px;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    padding: 2rem;
+    margin-bottom: 2.5rem;
+    border-radius: 0.5rem;
+    background-image:
+        linear-gradient(90deg, rgba(18, 22, 31, 0.86), rgba(18, 22, 31, 0.54)),
+        url("https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=2070");
+    background-position: center;
+    background-size: cover;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.16);
+    text-align: center;
+    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.hero-banner:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 0 25px rgba(255, 75, 75, 0.15);
+}
+
+.hero-banner h1 {
+    max-width: 900px;
+    margin: 0;
+    color: #FFFFFF;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1.18;
+    text-shadow: 0 1px 10px rgba(0, 0, 0, 0.4);
+    transition: transform 0.4s ease, text-shadow 0.4s ease;
+}
+
+.hero-banner:hover h1 {
+    transform: scale(1.02);
+    text-shadow: 0 4px 15px rgba(255, 75, 75, 0.5);
+}
+
+.hero-banner .hero-subtitle {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: clamp(0.95rem, 2vw, 1.15rem);
+    margin-top: 0.75rem;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.4);
+}
+
+
+.stButton > button {
+    border: 1px solid var(--streamlit-primary);
+    border-radius: 0.5rem;
+    color: var(--streamlit-primary);
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: 600;
+}
+
+.stButton > button:hover {
+    color: #FFFFFF;
+    background: var(--streamlit-primary);
+    border-color: var(--streamlit-primary);
+}
+
+div[data-testid="stDataFrame"],
+div[data-testid="stExpander"] {
+    background: var(--streamlit-surface);
+    border: 1px solid var(--streamlit-border);
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+}
+
+h1, h2, h3 { color: var(--streamlit-text); }
+
+.intro-section {
+    background: var(--streamlit-surface);
+    border: 1px solid var(--streamlit-border);
+    border-radius: 0.5rem;
+    padding: 2.5rem;
+    margin-top: 0.5rem;
+    margin-bottom: 2.5rem;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+.intro-section h2 { margin-top: 0; font-size: 1.5rem; color: var(--streamlit-text); margin-bottom: 1rem; }
+.intro-section p { color: var(--streamlit-muted); font-size: 1.05rem; line-height: 1.6; margin-bottom: 1rem; }
+.highlight-text { color: var(--streamlit-primary); font-weight: 600; }
+
+.image-tiles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+.tile-card {
+    position: relative;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    aspect-ratio: 4/3;
+    border: 1px solid var(--streamlit-border);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+.tile-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+.tile-card:hover img { transform: scale(1.08); }
+.tile-overlay {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: linear-gradient(to top, rgba(14,17,23, 0.95), transparent);
+    padding: 1.5rem 1rem 1rem 1rem;
+    transform: translateY(10px);
+    opacity: 0.8;
+    transition: all 0.3s ease;
+}
+.tile-card:hover .tile-overlay { transform: translateY(0); opacity: 1; }
+.tile-title { margin: 0; font-size: 1.1rem; padding: 0px !important; font-weight: 600; line-height: 1.2;color: var(--streamlit-text); }
+.tile-desc { margin: 0.25rem 0 0 0; font-size: 0.85rem; line-height: 1.5; color: var(--streamlit-muted); }
